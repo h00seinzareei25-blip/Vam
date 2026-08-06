@@ -8,20 +8,10 @@ local.properties
 captures/
 .externalNativeBuild/
 
-# Keystores (keep template only)
-*.jks
-*.keystore
-!debug.keystore
-
-# Node leftovers
-node_modules/
-package-lock.json
-capacitor.config.json
-
 # OS
 .DS_Store
 Thumbs.db
 
-# APK copies outside artifacts
-*.apk
-!../artifacts/
+# Node leftovers
+node_modules/
+package-lock.json
