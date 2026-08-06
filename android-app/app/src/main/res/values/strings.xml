@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">مدیریت بدهی‌ها</string>
+    <string name="channel_name">یادآوری اقساط</string>
+    <string name="channel_desc">اعلان‌های سررسید اقساط وام و بدهی</string>
+    <string name="reminder_title">یادآوری قسط</string>
+</resources>
