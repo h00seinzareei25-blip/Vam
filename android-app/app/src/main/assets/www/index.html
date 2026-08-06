@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#2563eb">
+    <title>مدیریت بدهی‌ها + ریز اقساط</title>
+    <style>
+        /* Font Awesome Icons - Minimal inline version */
+        .fas, .far, .fab {
+            display: inline-block;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            line-height: 1;
+        }
+        
+        /* Simple icon replacements using Unicode/emoji */
+        .fa-hand-holding-usd:before { content: "💳"; }
+        .fa-print:before { content: "🖨️"; }
+        .fa-download:before { content: "⬇️"; }
+        .fa-upload:before { content: "⬆️"; }
+        .fa-list-ul:before { content: "📋"; }
+        .fa-building:before { content: "🏦"; }
+        .fa-coin:before { content: "💰"; }
+        .fa-calendar-alt:before { content: "📅"; }
+        .fa-search:before { content: "🔍"; }
+        .fa-plus:before { content: "➕"; }
+        .fa-undo-alt:before { content: "↩️"; }
+        .fa-credit-card:before { content: "💳"; }
+        .fa-check-circle:before { content: "✅"; }
+        .fa-receipt:before { content: "🧾"; }
+        .fa-calendar-check:before { content: "📆"; }
+        .fa-edit:before { content: "✏️"; }
+        .fa-save:before { content: "💾"; }
+        .fa-plus-circle:before { content: "➕"; }
+        .fa-trash:before { content: "🗑️"; }
+        .fa-inbox:before { content: "📥"; }
+        .fa-database:before { content: "🗄️"; }
+        .fa-pen:before { content: "✏️"; }
+        .fa-check:before { content: "✓"; }
+        .fa-undo:before { content: "↩️"; }
+        .fa-edit:before { content: "✏️"; }
+        .fa-calculator:before { content: "🧮"; }
+        .fa-calendar-day:before { content: "📅"; }
+
+        /* Vazirmatn font - System fallback */
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: local('Vazirmatn'), local('Vazir'), local('IranSans');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+        body {
+            background: #f0f4f8;
+            padding: 24px;
+            direction: rtl;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior: none;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            padding: 28px 24px 40px;
+        }
+        .reminder-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 18px;
+            padding: 14px 18px;
+            margin: 16px 0 8px;
+        }
+        .reminder-bar .reminder-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .reminder-bar .reminder-info strong {
+            color: #1e3a8a;
+            font-size: 15px;
+        }
+        .reminder-bar .reminder-info span {
+            color: #64748b;
+            font-size: 12px;
+        }
+        .reminder-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #1e40af;
+            font-size: 14px;
+        }
+        .reminder-toggle input {
+            width: 44px;
+            height: 24px;
+            accent-color: #2563eb;
+        }
+        .btn-reminder-test {
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+        .btn-reminder-test:hover { background: #1d4ed8; }
+        @media (max-width: 768px) {
+            body { padding: 10px; padding-bottom: 28px; }
+            .container {
+                border-radius: 18px;
+                padding: 16px 12px 28px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            }
+            h1 { font-size: 20px; padding-bottom: 12px; gap: 8px; }
+            h1 i { font-size: 22px; }
+            h1 .header-actions { margin-right: 0; width: 100%; }
+            h1 .header-actions button { flex: 1; justify-content: center; padding: 8px 10px; font-size: 12px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0 18px; }
+            .stat-card { padding: 12px; border-radius: 14px; }
+            .stat-value { font-size: 18px; }
+            .toolbar {
+                border-radius: 18px;
+                padding: 10px 12px;
+                gap: 10px;
+            }
+            .toolbar .search-box { min-width: 100%; flex: 1 1 100%; }
+            .toolbar .filter-group { width: 100%; }
+            .toolbar select, .toolbar button { flex: 1; text-align: center; }
+            table { min-width: 640px; font-size: 12px; }
+            th, td { padding: 10px 8px; }
+            .modal { padding: 22px 18px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+            .installment-summary { gap: 12px; padding: 10px 12px; }
+            .footer-note { font-size: 12px; gap: 8px; }
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #e9edf4;
+            padding-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        h1 i {
+            color: #2563eb;
+            font-size: 30px;
+        }
+        h1 .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-right: auto;
+            flex-wrap: wrap;
+        }
+        h1 .header-actions button {
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+        h1 .header-actions .btn-export {
+            background: #8b5cf6;
+            color: white;
+        }
+        h1 .header-actions .btn-export:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        h1 .header-actions .btn-restore {
+            background: #f59e0b;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 .header-actions .btn-restore:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        h1 .header-actions .btn-restore input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        h1 .header-actions .btn-print {
+            background: #10b981;
+            color: white;
+        }
+        h1 .header-actions .btn-print:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 20px 0 28px;
+        }
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 16px 18px;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+        }
+        .stat-card:hover {
+            background: #f1f5f9;
+            border-color: #b9c7da;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .stat-card.highlight {
+            background: #eff6ff;
+            border-color: #2563eb;
+            border-width: 2px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 6px;
+        }
+        .stat-value.primary { color: #2563eb; }
+        .stat-value.success { color: #16a34a; }
+        .stat-value.warning { color: #d97706; }
+        .stat-value.danger { color: #dc2626; }
+        .stat-value.purple { color: #7c3aed; }
+        .stat-value.teal { color: #0d9488; }
+        .stat-value.month-name { 
+            color: #0f172a; 
+            font-size: 14px; 
+            font-weight: 600; 
+            margin-top: 2px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px 18px;
+            margin: 18px 0 22px;
+            background: #f1f5f9;
+            padding: 12px 18px;
+            border-radius: 60px;
+        }
+        .toolbar .search-box {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 40px;
+            padding: 0 16px;
+            border: 1px solid #d1d9e6;
+            transition: 0.2s;
+        }
+        .toolbar .search-box:focus-within {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+        .toolbar .search-box i {
+            color: #94a3b8;
+        }
+        .toolbar .search-box input {
+            border: none;
+            padding: 10px 12px;
+            width: 100%;
+            background: transparent;
+            font-size: 15px;
+            outline: none;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+        .toolbar .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .toolbar select, .toolbar button {
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid #d1d9e6;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            font-weight: 500;
+        }
+        .toolbar select:hover, .toolbar button:hover {
+            border-color: #94a3b8;
+        }
+        .toolbar button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .toolbar button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .toolbar .btn-add {
+            background: #16a34a;
+        }
+        .toolbar .btn-add:hover {
+            background: #15803d;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #e9edf4;
+            background: white;
+            margin-top: 6px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 700px;
+        }
+        th {
+            background: #f8fafc;
+            color: #1e293b;
+            font-weight: 700;
+            padding: 15px 12px;
+            white-space: nowrap;
+            border-bottom: 2px solid #e2e8f0;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.15s;
+            position: relative;
+            font-size: 13px;
+        }
+        th:hover {
+            background: #eef2f6;
+        }
+        th .sort-icon {
+            margin-right: 6px;
+            font-size: 12px;
+            opacity: 0.5;
+        }
+        th.active .sort-icon {
+            opacity: 1;
+            color: #2563eb;
+        }
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #eef2f6;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: 400;
+        }
+        tr.clickable {
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        tr.clickable:hover td {
+            background: #f0f5ff;
+        }
+        tr.clickable.active td {
+            background: #e6f0ff;
+            border-bottom: 2px solid #2563eb;
+        }
+        .badge {
+            background: #dbeafe;
+            color: #1e3a8a;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            letter-spacing: 0.3px;
+        }
+        .badge.orange { background: #fef3c7; color: #92400e; }
+        .badge.green { background: #dcfce7; color: #166534; }
+        .badge.blue { background: #dbeafe; color: #1e3a8a; }
+        .badge.red { background: #fee2e2; color: #991b1b; }
+        .badge.paid { background: #d1fae5; color: #065f46; }
+        .badge.unpaid { background: #fee2e2; color: #991b1b; }
+        .badge.done { background: #d1fae5; color: #065f46; }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #64748b;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+        }
+        .footer-note {
+            margin-top: 28px;
+            font-size: 13px;
+            color: #64748b;
+            text-align: left;
+            border-top: 1px solid #e9edf4;
+            padding-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .footer-note .save-status {
+            color: #16a34a;
+            font-weight: 500;
+        }
+
+        /* بخش اقساط */
+        .installment-section {
+            margin-top: 28px;
+            border-top: 2px dashed #d1d9e6;
+            padding-top: 20px;
+        }
+        .installment-section h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .installment-section h3 i {
+            color: #2563eb;
+        }
+        .installment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .installment-table th {
+            background: #f1f5f9;
+            padding: 12px 10px;
+            font-weight: 700;
+            cursor: default;
+            font-size: 12px;
+        }
+        .installment-table th:hover {
+            background: #f1f5f9;
+        }
+        .installment-table td {
+            padding: 10px 10px;
+            border-bottom: 1px solid #eef2f6;
+        }
+        .btn-pay {
+            padding: 5px 16px;
+            border-radius: 30px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #2563eb;
+            color: white;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+        .btn-pay:hover {
+            background: #1d4ed8;
+            transform: scale(1.03);
+        }
+        .btn-pay.paid {
+            background: #16a34a;
+        }
+        .btn-pay.paid:hover {
+            background: #15803d;
+        }
+        .btn-pay.unpaid {
+            background: #dc2626;
+        }
+        .btn-pay.unpaid:hover {
+            background: #b91c1c;
+        }
+        .btn-edit-amount {
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #fef3c7;
+            color: #92400e;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            font-weight: 500;
+        }
+        .btn-edit-amount:hover {
+            background: #fde68a;
+            transform: scale(1.03);
+        }
+        .installment-summary {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px 18px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            border: 1px solid #e2e8f0;
+        }
+        .installment-summary span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .installment-summary strong {
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* مودال‌ها */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        .modal {
+            background: white;
+            border-radius: 28px;
+            padding: 30px 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal h2 {
+            font-size: 22px;
+            color: #0f172a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+        .modal h2 i {
+            color: #2563eb;
+        }
+        .modal .form-group {
+            margin-bottom: 16px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .modal .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d9e6;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+            direction: ltr;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            transition: 0.2s;
+        }
+        .modal .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        }
+        .modal .form-group .info-text {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .modal .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .modal .modal-actions button {
+            padding: 10px 28px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+        .modal .modal-actions .btn-save {
+            background: #2563eb;
+            color: white;
+        }
+        .modal .modal-actions .btn-save:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .modal .modal-actions .btn-cancel {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        .modal .modal-actions .btn-cancel:hover {
+            background: #cbd5e1;
+        }
+        .modal .modal-actions .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+        .modal .modal-actions .btn-delete:hover {
+            background: #b91c1c;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .action-buttons button {
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #e2e8f0;
+            color: #334155;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            font-weight: 500;
+        }
+        .action-buttons button:hover {
+            background: #cbd5e1;
+            transform: scale(1.05);
+        }
+        .action-buttons .btn-edit {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+        .action-buttons .btn-edit:hover {
+            background: #bfdbfe;
+        }
+        .action-buttons .btn-delete-row {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .action-buttons .btn-delete-row:hover {
+            background: #fecaca;
+        }
+
+        .paid-date {
+            font-size: 12px;
+            color: #065f46;
+            background: #d1fae5;
+            padding: 2px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 16px; }
+            .toolbar { border-radius: 24px; }
+            .modal { padding: 20px; }
+            h1 .header-actions { margin-right: 0; width: 100%; }
+            h1 .header-actions button { flex: 1; justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ============================================================
+           استایل‌های پرینت
+           ============================================================ */
+        @media print {
+            body {
+                background: white;
+                padding: 10px;
+                font-size: 12px;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 10px;
+                max-width: 100%;
+            }
+            .toolbar, .header-actions, .btn-print, .btn-export, .btn-restore, .btn-add, .action-buttons, .btn-edit-amount, .btn-pay, #restoreBtn, .no-print {
+                display: none !important;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+                margin: 10px 0 15px;
+            }
+            .stat-card {
+                border: 1px solid #ddd;
+                padding: 10px 12px;
+                box-shadow: none;
+            }
+            .stat-value {
+                font-size: 20px;
+            }
+            h1 {
+                font-size: 22px;
+                border-bottom: 2px solid #333;
+                padding-bottom: 10px;
+            }
+            h1 .header-actions { display: none !important; }
+            table {
+                font-size: 11px;
+                min-width: 100%;
+            }
+            th, td {
+                padding: 6px 8px;
+                border: 1px solid #ddd;
+            }
+            th {
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .badge {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 2px 10px;
+                font-size: 10px;
+            }
+            .badge.orange { background: #fef3c7 !important; }
+            .badge.green { background: #dcfce7 !important; }
+            .badge.red { background: #fee2e2 !important; }
+            .badge.paid { background: #d1fae5 !important; }
+            .badge.unpaid { background: #fee2e2 !important; }
+            .badge.done { background: #d1fae5 !important; }
+            .installment-section {
+                border-top: 2px solid #333;
+                margin-top: 15px;
+                padding-top: 10px;
+            }
+            .installment-table th {
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .installment-summary {
+                border: 1px solid #ddd;
+                padding: 8px 12px;
+                margin-bottom: 10px;
+                gap: 15px;
+            }
+            .paid-date {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .footer-note {
+                border-top: 1px solid #ddd;
+                margin-top: 15px;
+                padding-top: 10px;
+            }
+            .installment-section .action-buttons { display: none !important; }
+            .installment-table td:last-child { display: none !important; }
+            .installment-table th:last-child { display: none !important; }
+            tr.clickable.active td {
+                background: #f0f5ff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .hidden { display: none !important; }
+            #installmentSection.hidden { display: none !important; }
+            .modal-overlay { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <h1>
+        <i class="fas fa-hand-holding-usd"></i> مدیریت بدهی‌ها + ریز اقساط
+        <div class="header-actions no-print">
+            <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> پرینت</button>
+            <button class="btn-export" onclick="exportData()"><i class="fas fa-download"></i> خروجی JSON</button>
+            <button class="btn-restore" id="restoreBtn">
+                <i class="fas fa-upload"></i> بازیابی JSON
+                <input type="file" id="fileInput" accept=".json" onchange="restoreData(event)">
+            </button>
+        </div>
+    </h1>
+
+    <div class="reminder-bar no-print">
+        <div class="reminder-info">
+            <strong>🔔 یادآوری نوتیفیکیشن اقساط</strong>
+            <span id="reminderStatusText">اعلان در روز سررسید و ۱ و ۳ روز قبل از آن (ساعت ۹ صبح)</span>
+        </div>
+        <div class="reminder-toggle">
+            <label for="reminderEnabled">فعال</label>
+            <input type="checkbox" id="reminderEnabled" checked onchange="onReminderToggle()">
+            <button type="button" class="btn-reminder-test" onclick="syncAndroidReminders(true)">همگام‌سازی</button>
+        </div>
+    </div>
+
+    <!-- آمار -->
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label"><i class="fas fa-list-ul"></i> تعداد کل</div><div class="stat-value" id="totalCount">0</div></div>
+        <div class="stat-card"><div class="stat-label"><i class="fas fa-building"></i> بانک‌ها</div><div class="stat-value primary" id="bankCount">0</div></div>
+        <div class="stat-card highlight"><div class="stat-label"><i class="fas fa-calendar-day"></i> <span id="currentMonthLabel">جاری</span></div><div class="stat-value teal" id="currentMonthInstallments">0</div></div>
+        <div class="stat-card"><div class="stat-label"><i class="fas fa-calculator"></i> جمع کل اقساط</div><div class="stat-value purple" id="totalInstallmentsAmount">0</div></div>
+        <div class="stat-card"><div class="stat-label"><i class="fas fa-calendar-alt"></i> نزدیک‌ترین سررسید</div><div class="stat-value danger" id="nearestDue">-</div></div>
+    </div>
+
+    <!-- نوار ابزار -->
+    <div class="toolbar no-print">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="جستجو در نام بانک، کد، تاریخ..." oninput="filterTable()">
+        </div>
+        <div class="filter-group">
+            <select id="bankFilter" onchange="filterTable()">
+                <option value="همه">همه بانک‌ها</option>
+            </select>
+            <button class="btn-add" onclick="openAddModal()"><i class="fas fa-plus"></i> افزودن بدهی</button>
+            <button onclick="resetFilters()"><i class="fas fa-undo-alt"></i> بازنشانی</button>
+        </div>
+    </div>
+
+    <!-- جدول اصلی بدهی‌ها -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="sortTable('id')" data-sort="id"># <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('id')" data-sort="id">کد <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('bank')" data-sort="bank">نام بانک <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('dueDate')" data-sort="dueDate">تاریخ پایان <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('nextInstallment')" data-sort="nextInstallment">تاریخ قسط بعدی <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('amount')" data-sort="amount">مبلغ هر قسط <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('balance')" data-sort="balance">مانده وام <span class="sort-icon">⇅</span></th>
+                    <th onclick="sortTable('status')" data-sort="status">وضعیت <span class="sort-icon">⇅</span></th>
+                    <th class="no-print">عملیات</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="9" class="empty-state"><i class="fas fa-database"></i><br>در حال بارگذاری داده‌ها...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- بخش نمایش اقساط -->
+    <div id="installmentSection" class="installment-section hidden">
+        <h3>
+            <i class="fas fa-receipt"></i> ریز اقساط 
+            <span id="selectedBankName" style="font-weight:400;font-size:18px;color:#475569;"></span>
+        </h3>
+
+        <div class="installment-summary">
+            <span>تعداد کل اقساط: <strong id="installmentTotalCount">0</strong></span>
+            <span>پرداخت شده: <strong id="installmentPaidCount">0</strong></span>
+            <span>پرداخت نشده: <strong id="installmentUnpaidCount">0</strong></span>
+            <span>مجموع اقساط: <strong id="installmentTotalAmount">0</strong></span>
+            <span>مجموع پرداختی: <strong id="installmentTotalPaid">0</strong></span>
+            <span>مانده باقیمانده: <strong id="installmentRemainingBalance">0</strong></span>
+        </div>
+        <div class="table-wrapper">
+            <table class="installment-table">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>تاریخ</th>
+                        <th>مبلغ</th>
+                        <th>وضعیت</th>
+                        <th>تاریخ پرداخت</th>
+                        <th class="no-print">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody id="installmentBody">
+                    <tr><td colspan="6" class="empty-state">هیچ قسطی یافت نشد</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <span><i class="fas fa-credit-card"></i> داده‌ها · <span id="rowCount">۰</span> رکورد</span>
+        <span class="save-status"><i class="fas fa-check-circle"></i> <span id="saveStatus">داده‌ها در حافظه مرورگر ذخیره می‌شوند</span></span>
+    </div>
+</div>
+
+<!-- مودال ثبت تاریخ پرداخت -->
+<div id="paymentDateModal" class="modal-overlay hidden">
+    <div class="modal">
+        <h2><i class="fas fa-calendar-check"></i> ثبت تاریخ پرداخت</h2>
+        <div class="form-group">
+            <label>تاریخ قسط</label>
+            <input type="text" id="paymentInstallmentDate" disabled style="background:#f1f5f9;">
+        </div>
+        <div class="form-group">
+            <label>تاریخ پرداخت (YYYY/MM/DD)</label>
+            <input type="text" id="paymentDateInput" placeholder="مثال: 1405/05/03" dir="ltr">
+            <div class="info-text">تاریخ شمسی را به فرمت YYYY/MM/DD وارد کنید</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closePaymentDateModal()">انصراف</button>
+            <button class="btn-save" onclick="savePaymentDate()"><i class="fas fa-check"></i> ثبت پرداخت</button>
+        </div>
+    </div>
+</div>
+
+<!-- مودال ویرایش مبلغ قسط -->
+<div id="amountModal" class="modal-overlay hidden">
+    <div class="modal">
+        <h2><i class="fas fa-edit"></i> ویرایش مبلغ قسط</h2>
+        <div class="form-group">
+            <label>تاریخ قسط</label>
+            <input type="text" id="editInstallmentDate" disabled style="background:#f1f5f9;">
+        </div>
+        <div class="form-group">
+            <label>مبلغ جدید</label>
+            <input type="number" id="editInstallmentAmount" placeholder="مبلغ جدید را وارد کنید" dir="ltr">
+            <div class="info-text">مبلغ را به صورت عدد بدون کاما وارد کنید</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeAmountModal()">انصراف</button>
+            <button class="btn-save" onclick="saveAmountEdit()"><i class="fas fa-save"></i> ذخیره</button>
+        </div>
+    </div>
+</div>
+
+<!-- مودال افزودن/ویرایش بدهی -->
+<div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal">
+        <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> افزودن بدهی جدید</h2>
+        <div class="form-group">
+            <label>نام بانک</label>
+            <input type="text" id="modalBank" placeholder="نام بانک را وارد کنید">
+        </div>
+        <div class="form-group">
+            <label>تاریخ پایان (YYYY/MM/DD)</label>
+            <input type="text" id="modalDueDate" placeholder="مثال: 1406/06/03" dir="ltr">
+            <div class="info-text">تاریخ پایان وام را به فرمت YYYY/MM/DD وارد کنید</div>
+        </div>
+        <div class="form-group">
+            <label>مبلغ هر قسط</label>
+            <input type="number" id="modalAmount" placeholder="مبلغ را وارد کنید" dir="ltr">
+        </div>
+        <div class="form-group">
+            <label>روز پرداخت (عدد)</label>
+            <input type="number" id="modalDay" placeholder="مثال: 6" dir="ltr" min="1" max="31">
+            <div class="info-text">روز پرداخت هر ماه (1 تا 31)</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-delete" id="modalDeleteBtn" onclick="deleteDebt()" style="display:none;"><i class="fas fa-trash"></i> حذف</button>
+            <button class="btn-cancel" onclick="closeModal()">انصراف</button>
+            <button class="btn-save" onclick="saveDebt()"><i class="fas fa-save"></i> ذخیره</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==============================================================
+    // 📦 داده‌های پیش‌فرض
+    // ==============================================================
+    const DEFAULT_DEBTS_DATA = [
+        { id: 1, bank: "مهر", dueDate: "1408/02/08", amount: 46040000, installmentDay: 8 },
+        { id: 2, bank: "مهر", dueDate: "1407/06/10", amount: 32310000, installmentDay: 10 },
+        { id: 3, bank: "شهر", dueDate: "1406/12/11", amount: 56464000, installmentDay: 11 },
+        { id: 4, bank: "رسالت", dueDate: "1405/06/12", amount: 175500000, installmentDay: 12 },
+        { id: 5, bank: "سپه", dueDate: "1407/08/13", amount: 9090000, installmentDay: 13 },
+        { id: 6, bank: "ملی", dueDate: "1406/04/24", amount: 45454546, installmentDay: 24 },
+        { id: 7, bank: "ملت", dueDate: "1407/04/24", amount: 77419000, installmentDay: 24 },
+        { id: 8, bank: "شهر", dueDate: "1407/11/25", amount: 17800000, installmentDay: 25 },
+        { id: 9, bank: "ملی", dueDate: "1407/06/27", amount: 77419000, installmentDay: 27 },
+        { id: 10, bank: "رسالت", dueDate: "1406/01/27", amount: 70000000, installmentDay: 27 },
+        { id: 11, bank: "شهر", dueDate: "1409/03/28", amount: 59200000, installmentDay: 28 },
+        { id: 12, bank: "شهر", dueDate: "1410/04/29", amount: 53390000, installmentDay: 29 }
+    ];
+
+    // ==============================================================
+    // نام ماه‌های شمسی
+    // ==============================================================
+    const PERSIAN_MONTHS = [
+        'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+    ];
+
+    // ==============================================================
+    // توابع تبدیل تاریخ
+    // ==============================================================
+    function toPersianDate(gregorianDate) {
+        const d = typeof gregorianDate === 'string' ? new Date(gregorianDate + 'T00:00:00') : new Date(gregorianDate);
+        if (isNaN(d.getTime())) return gregorianDate;
+        const gYear = d.getFullYear();
+        const gMonth = d.getMonth() + 1;
+        const gDay = d.getDate();
+        const gy = gYear;
+        let gm = gMonth;
+        let gd = gDay;
+        const days = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        let dayOfYear = days[gm - 1] + gd;
+        if (gm > 2 && ((gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0)) dayOfYear++;
+        let jy = gy - 621;
+        const leap = (jy % 33 === 1 || jy % 33 === 5 || jy % 33 === 9 || jy % 33 === 13 || jy % 33 === 17 || jy % 33 === 22 || jy % 33 === 26 || jy % 33 === 30);
+        const daysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+        let jm = 1;
+        let jd = 1;
+        let offset = leap ? 80 : 79;
+        if (dayOfYear > offset) {
+            jd = dayOfYear - offset;
+            while (jd > daysInMonth[jm - 1]) {
+                jd -= daysInMonth[jm - 1];
+                jm++;
+            }
+        } else {
+            jy--;
+            jd = dayOfYear + (leap ? 286 : 287);
+            while (jd > daysInMonth[jm - 1]) {
+                jd -= daysInMonth[jm - 1];
+                jm++;
+            }
+        }
+        return `${jy}/${String(jm).padStart(2, '0')}/${String(jd).padStart(2, '0')}`;
+    }
+
+    function getCurrentPersianDate() {
+        return toPersianDate(new Date());
+    }
+
+    function getCurrentPersianMonth() {
+        const today = getCurrentPersianDate();
+        const parts = today.split('/').map(Number);
+        return { year: parts[0], month: parts[1], monthName: PERSIAN_MONTHS[parts[1] - 1] };
+    }
+
+    function toGregorianDate(persianDate) {
+        const parts = persianDate.split('/');
+        if (parts.length !== 3) return null;
+        const jy = parseInt(parts[0]);
+        const jm = parseInt(parts[1]);
+        const jd = parseInt(parts[2]);
+        if (isNaN(jy) || isNaN(jm) || isNaN(jd)) return null;
+        let gy = jy + 621;
+        const daysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+        const leap = (jy % 33 === 1 || jy % 33 === 5 || jy % 33 === 9 || jy % 33 === 13 || jy % 33 === 17 || jy % 33 === 22 || jy % 33 === 26 || jy % 33 === 30);
+        let dayOfYear = 0;
+        for (let i = 0; i < jm - 1; i++) dayOfYear += daysInMonth[i];
+        dayOfYear += jd;
+        let offset = leap ? 80 : 79;
+        let gDayOfYear = dayOfYear + offset;
+        let gMonth = 1;
+        const gDaysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        const isLeap = (gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0;
+        if (isLeap) gDaysInMonth[2] = 29;
+        while (gDayOfYear > gDaysInMonth[gMonth]) {
+            gDayOfYear -= gDaysInMonth[gMonth];
+            gMonth++;
+            if (gMonth > 12) {
+                gMonth = 1;
+                gy++;
+            }
+        }
+        return new Date(gy, gMonth - 1, gDayOfYear);
+    }
+
+    function getPersianMonthDays(year, month) {
+        const daysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+        if (month === 12) {
+            const leap = (year % 33 === 1 || year % 33 === 5 || year % 33 === 9 || year % 33 === 13 || year % 33 === 17 || year % 33 === 22 || year % 33 === 26 || year % 33 === 30);
+            return leap ? 30 : 29;
+        }
+        return daysInMonth[month - 1];
+    }
+
+    function comparePersianDates(date1, date2) {
+        const parts1 = date1.split('/').map(Number);
+        const parts2 = date2.split('/').map(Number);
+        if (parts1.length !== 3 || parts2.length !== 3) return 0;
+        const num1 = parts1[0] * 10000 + parts1[1] * 100 + parts1[2];
+        const num2 = parts2[0] * 10000 + parts2[1] * 100 + parts2[2];
+        return num1 - num2;
+    }
+
+    function isValidPersianDate(dateStr) {
+        const parts = dateStr.split('/');
+        if (parts.length !== 3) return false;
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]);
+        const day = parseInt(parts[2]);
+        if (isNaN(year) || isNaN(month) || isNaN(day)) return false;
+        if (year < 1300 || year > 1500) return false;
+        if (month < 1 || month > 12) return false;
+        const maxDay = getPersianMonthDays(year, month);
+        if (day < 1 || day > maxDay) return false;
+        return true;
+    }
+
+    // ==============================================================
+    // تولید اقساط - شروع از امروز تا تاریخ پایان
+    // ==============================================================
+    function generateInstallments(debt) {
+        const dueDate = debt.dueDate;
+        const day = debt.installmentDay || 6;
+        const amount = debt.amount;
+        const installments = [];
+        
+        const todayPersian = getCurrentPersianDate();
+        const todayParts = todayPersian.split('/').map(Number);
+        
+        let startYear = todayParts[0];
+        let startMonth = todayParts[1];
+        let startDay = Math.min(day, getPersianMonthDays(startYear, startMonth));
+        
+        // اگر تاریخ امروز از روز انتخابی بیشتر است، از ماه بعد شروع کن
+        if (todayParts[2] > startDay) {
+            startMonth++;
+            if (startMonth > 12) {
+                startMonth = 1;
+                startYear++;
+            }
+            startDay = Math.min(day, getPersianMonthDays(startYear, startMonth));
+        }
+        
+        // اگر روز انتخابی از روزهای ماه بیشتر بود، آخرین روز ماه را انتخاب کن
+        const maxDay = getPersianMonthDays(startYear, startMonth);
+        if (day > maxDay) startDay = maxDay;
+        
+        let currentYear = startYear;
+        let currentMonth = startMonth;
+        let currentDay = startDay;
+        let count = 0;
+        let maxInstallments = 120;
+        
+        const startDateStr = `${startYear}/${String(startMonth).padStart(2, '0')}/${String(startDay).padStart(2, '0')}`;
+        if (comparePersianDates(startDateStr, dueDate) > 0) {
+            return installments;
+        }
+        
+        while (count < maxInstallments) {
+            const currentDateStr = `${currentYear}/${String(currentMonth).padStart(2, '0')}/${String(currentDay).padStart(2, '0')}`;
+            
+            if (comparePersianDates(currentDateStr, dueDate) > 0) {
+                break;
+            }
+            
+            if (comparePersianDates(currentDateStr, todayPersian) < 0) {
+                currentMonth++;
+                if (currentMonth > 12) {
+                    currentMonth = 1;
+                    currentYear++;
+                }
+                const maxDay2 = getPersianMonthDays(currentYear, currentMonth);
+                currentDay = Math.min(day, maxDay2);
+                continue;
+            }
+            
+            const exists = installments.some(i => i.date === currentDateStr);
+            if (!exists) {
+                installments.push({
+                    row: count + 1,
+                    date: currentDateStr,
+                    amount: amount,
+                    paid: false,
+                    paidDate: null
+                });
+                count++;
+            }
+            
+            currentMonth++;
+            if (currentMonth > 12) {
+                currentMonth = 1;
+                currentYear++;
+            }
+            const maxDay3 = getPersianMonthDays(currentYear, currentMonth);
+            currentDay = Math.min(day, maxDay3);
+        }
+        
+        return installments;
+    }
+
+    // ==============================================================
+    // توابع وضعیت
+    // ==============================================================
+    function getStatus(nextInstallment, debt) {
+        if (!nextInstallment || nextInstallment === '—') {
+            // بررسی اینکه آیا همه اقساط پرداخت شده‌اند
+            if (debt && debt.installments && debt.installments.length > 0) {
+                const allPaid = debt.installments.every(i => i.paid);
+                if (allPaid) {
+                    return { text: 'تمام شده', class: 'badge done' };
+                }
+            }
+            return { text: 'فعال', class: 'badge green' };
+        }
+        
+        if (nextInstallment === 'تمام شده') {
+            return { text: 'تمام شده', class: 'badge done' };
+        }
+
+        const todayPersian = getCurrentPersianDate();
+        const todayParts = todayPersian.split('/').map(Number);
+        const todayNum = todayParts[0] * 10000 + todayParts[1] * 100 + todayParts[2];
+
+        const parts = nextInstallment.split('/').map(Number);
+        if (parts.length !== 3) {
+            return { text: 'فعال', class: 'badge green' };
+        }
+
+        const dueNum = parts[0] * 10000 + parts[1] * 100 + parts[2];
+        const diff = dueNum - todayNum;
+
+        if (diff < 0) {
+            return { text: 'سررسید گذشته', class: 'badge red' };
+        } else if (diff <= 5) {
+            return { text: 'نزدیک به سررسید', class: 'badge orange' };
+        } else {
+            return { text: 'فعال', class: 'badge green' };
+        }
+    }
+
+    function updateNextInstallment(debt) {
+        if (!debt.installments || debt.installments.length === 0) {
+            debt.nextInstallment = '—';
+            return;
+        }
+        const unpaid = debt.installments.filter(i => !i.paid);
+        if (unpaid.length > 0) {
+            // فقط اقساطی که تاریخشان از امروز گذشته باشد یا برابر امروز باشد
+            const todayPersian = getCurrentPersianDate();
+            const availableUnpaid = unpaid.filter(i => comparePersianDates(i.date, todayPersian) >= 0);
+            if (availableUnpaid.length > 0) {
+                debt.nextInstallment = availableUnpaid[0].date;
+            } else {
+                // اگر همه اقساط تاریخشان گذشته ولی پرداخت نشده
+                debt.nextInstallment = unpaid[0].date;
+            }
+        } else {
+            debt.nextInstallment = 'تمام شده';
+        }
+    }
+
+    function calculateBalance(debt) {
+        if (!debt.installments || debt.installments.length === 0) {
+            return debt.amount || 0;
+        }
+        
+        const totalInstallments = debt.installments.reduce((sum, inst) => sum + inst.amount, 0);
+        const totalPaid = debt.installments
+            .filter(inst => inst.paid)
+            .reduce((sum, inst) => sum + inst.amount, 0);
+        
+        return Math.max(0, totalInstallments - totalPaid);
+    }
+
+    function updateBalance(debt) {
+        debt.balance = calculateBalance(debt);
+    }
+
+    function calculateNearestDueDate(data) {
+        if (!data || data.length === 0) return '—';
+        
+        const todayPersian = getCurrentPersianDate();
+        const todayParts = todayPersian.split('/').map(Number);
+        const todayNum = todayParts[0] * 10000 + todayParts[1] * 100 + todayParts[2];
+        
+        let nearest = null;
+        let nearestDiff = Infinity;
+        
+        data.forEach(item => {
+            const nextDate = item.nextInstallment;
+            if (nextDate && nextDate !== '—' && nextDate !== 'تمام شده') {
+                const parts = nextDate.split('/').map(Number);
+                if (parts.length === 3) {
+                    const dateNum = parts[0] * 10000 + parts[1] * 100 + parts[2];
+                    if (dateNum >= todayNum) {
+                        const diff = dateNum - todayNum;
+                        if (diff < nearestDiff) {
+                            nearestDiff = diff;
+                            nearest = nextDate;
+                        }
+                    }
+                }
+            }
+        });
+        
+        if (nearest === null) {
+            data.forEach(item => {
+                const nextDate = item.nextInstallment;
+                if (nextDate && nextDate !== '—' && nextDate !== 'تمام شده') {
+                    const parts = nextDate.split('/').map(Number);
+                    if (parts.length === 3) {
+                        const dateNum = parts[0] * 10000 + parts[1] * 100 + parts[2];
+                        if (nearest === null || dateNum < parseInt(nearest.split('/').join(''))) {
+                            nearest = nextDate;
+                        }
+                    }
+                }
+            });
+        }
+        
+        return nearest || '—';
+    }
+
+    // ==============================================================
+    // محاسبه جمع کل مبلغ اقساط
+    // ==============================================================
+    function calculateTotalInstallmentsAmount(data) {
+        let total = 0;
+        data.forEach(item => {
+            if (item.installments && item.installments.length > 0) {
+                const sum = item.installments.reduce((acc, inst) => acc + inst.amount, 0);
+                total += sum;
+            } else {
+                total += item.amount || 0;
+            }
+        });
+        return total;
+    }
+
+    // ==============================================================
+    // محاسبه جمع اقساط ماه جاری (فقط اقساطی که تاریخشان از امروز گذشته نباشد)
+    // ==============================================================
+    function calculateCurrentMonthInstallments(data) {
+        const current = getCurrentPersianMonth();
+        const currentYear = current.year;
+        const currentMonth = current.month;
+        const todayPersian = getCurrentPersianDate();
+        
+        let total = 0;
+        
+        data.forEach(item => {
+            if (item.installments && item.installments.length > 0) {
+                item.installments.forEach(inst => {
+                    const instParts = inst.date.split('/').map(Number);
+                    if (instParts.length === 3) {
+                        // قسط در ماه جاری باشد، پرداخت نشده باشد، و تاریخ آن از امروز کمتر نباشد
+                        if (instParts[0] === currentYear && instParts[1] === currentMonth && !inst.paid) {
+                            // فقط اقساطی که تاریخشان از امروز گذشته نباشد (امروز یا آینده)
+                            if (comparePersianDates(inst.date, todayPersian) >= 0) {
+                                total += inst.amount;
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        
+        return total;
+    }
+
+    // --------------------------------------------------------------
+    // مدیریت ذخیره‌سازی در localStorage
+    // --------------------------------------------------------------
+    const STORAGE_KEY = 'debtManagerData';
+
+    function loadFromStorage() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data && data.length > 0) {
+                    return data;
+                }
+            }
+        } catch (e) {
+            console.warn('خطا در بارگذاری داده:', e);
+        }
+        return null;
+    }
+
+    function saveToStorage(data) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            document.getElementById('saveStatus').textContent = '✅ داده‌ها ذخیره شد';
+            document.getElementById('saveStatus').style.color = '#16a34a';
+            syncAndroidReminders(false);
+        } catch (e) {
+            console.warn('خطا در ذخیره داده:', e);
+            document.getElementById('saveStatus').textContent = '⚠ خطا در ذخیره';
+            document.getElementById('saveStatus').style.color = '#dc2626';
+        }
+    }
+
+    // --------------------------------------------------------------
+    // یادآوری نوتیفیکیشن اندروید
+    // --------------------------------------------------------------
+    const REMINDER_PREF_KEY = 'debtReminderEnabled';
+
+    function isAndroidApp() {
+        try {
+            return !!(window.AndroidBridge && typeof window.AndroidBridge.scheduleReminders === 'function');
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function isReminderEnabled() {
+        const saved = localStorage.getItem(REMINDER_PREF_KEY);
+        if (saved === null) return true;
+        return saved === '1';
+    }
+
+    function onReminderToggle() {
+        const enabled = document.getElementById('reminderEnabled').checked;
+        localStorage.setItem(REMINDER_PREF_KEY, enabled ? '1' : '0');
+        syncAndroidReminders(true);
+    }
+
+    function buildReminderPayload() {
+        const reminders = [];
+        let nextId = 100;
+        const offsets = [0, 1, 3]; // روز سررسید، ۱ روز قبل، ۳ روز قبل
+
+        debts.forEach(debt => {
+            if (!debt.installments) return;
+            debt.installments.forEach(inst => {
+                if (inst.paid) return;
+                const gDate = toGregorianDate(inst.date);
+                if (!gDate || isNaN(gDate.getTime())) return;
+
+                const amountFa = Number(inst.amount || 0).toLocaleString('fa-IR');
+                offsets.forEach(daysBefore => {
+                    const year = gDate.getFullYear();
+                    const month = gDate.getMonth() + 1;
+                    const day = gDate.getDate();
+
+                    let title = 'یادآوری قسط';
+                    let body;
+                    if (daysBefore === 0) {
+                        title = 'سررسید قسط امروز';
+                        body = `قسط بانک ${debt.bank} به مبلغ ${amountFa} ریال امروز سررسید است (${inst.date})`;
+                    } else if (daysBefore === 1) {
+                        title = 'قسط فردا سررسید می‌شود';
+                        body = `قسط بانک ${debt.bank} فردا (${inst.date}) سررسید می‌شود — مبلغ: ${amountFa}`;
+                    } else {
+                        title = `قسط تا ${daysBefore} روز دیگر`;
+                        body = `قسط بانک ${debt.bank} در تاریخ ${inst.date} سررسید می‌شود — مبلغ: ${amountFa}`;
+                    }
+
+                    reminders.push({
+                        id: nextId++,
+                        title,
+                        body,
+                        year,
+                        month,
+                        day,
+                        daysBefore
+                    });
+                });
+            });
+        });
+
+        // فقط نزدیک‌ترین یادآورها را نگه دار تا از محدودیت آلارم رد نشویم
+        reminders.sort((a, b) => {
+            const da = new Date(a.year, a.month - 1, a.day);
+            da.setDate(da.getDate() - (a.daysBefore || 0));
+            const db = new Date(b.year, b.month - 1, b.day);
+            db.setDate(db.getDate() - (b.daysBefore || 0));
+            return da - db;
+        });
+
+        return reminders.slice(0, 80);
+    }
+
+    function syncAndroidReminders(showFeedback) {
+        const enabledEl = document.getElementById('reminderEnabled');
+        if (enabledEl) enabledEl.checked = isReminderEnabled();
+
+        if (!isAndroidApp()) {
+            if (showFeedback) {
+                showToast('یادآوری فقط در اپ اندروید فعال است');
+            }
+            const status = document.getElementById('reminderStatusText');
+            if (status) status.textContent = 'برای دریافت اعلان، نسخه اندروید را نصب کنید';
+            return;
+        }
+
+        try {
+            if (!isReminderEnabled()) {
+                AndroidBridge.cancelAllReminders();
+                const status = document.getElementById('reminderStatusText');
+                if (status) status.textContent = 'یادآوری غیرفعال است';
+                if (showFeedback) showToast('یادآوری‌ها لغو شدند');
+                return;
+            }
+
+            const payload = buildReminderPayload();
+            AndroidBridge.scheduleReminders(JSON.stringify(payload));
+            const status = document.getElementById('reminderStatusText');
+            if (status) {
+                status.textContent = `${payload.length.toLocaleString('fa-IR')} یادآوری زمان‌بندی شد (روز سررسید + ۱ و ۳ روز قبل — ساعت ۹)`;
+            }
+            if (showFeedback) {
+                showToast(`${payload.length} یادآوری همگام شد`);
+            }
+        } catch (e) {
+            console.warn('reminder sync failed', e);
+            if (showFeedback) showToast('خطا در همگام‌سازی یادآوری');
+        }
+    }
+
+    window.syncAndroidReminders = syncAndroidReminders;
+    window.onReminderToggle = onReminderToggle;
+
+    // --------------------------------------------------------------
+    // مدیریت داده‌ها
+    // --------------------------------------------------------------
+    let debts = [];
+    let nextId = 1;
+
+    function initializeData() {
+        const savedData = loadFromStorage();
+        if (savedData) {
+            debts = savedData;
+            const maxId = debts.reduce((max, d) => Math.max(max, d.id || 0), 0);
+            nextId = maxId + 1;
+            
+            debts.forEach(debt => {
+                if (!debt.installments || debt.installments.length === 0) {
+                    debt.installments = generateInstallments(debt);
+                }
+                debt.installments.forEach(inst => {
+                    if (inst.paid && !inst.paidDate) {
+                        inst.paidDate = inst.date;
+                    }
+                    if (!inst.paid && inst.paidDate) {
+                        inst.paidDate = null;
+                    }
+                });
+                updateBalance(debt);
+                updateNextInstallment(debt);
+            });
+        } else {
+            debts = JSON.parse(JSON.stringify(DEFAULT_DEBTS_DATA));
+            const maxId = debts.reduce((max, d) => Math.max(max, d.id), 0);
+            nextId = maxId + 1;
+            debts.forEach(debt => {
+                debt.installments = generateInstallments(debt);
+                updateBalance(debt);
+                updateNextInstallment(debt);
+            });
+            saveToStorage(debts);
+        }
+        
+        // تنظیم نام ماه جاری در کارت آمار
+        const current = getCurrentPersianMonth();
+        document.getElementById('currentMonthLabel').textContent = current.monthName;
+    }
+
+    // --------------------------------------------------------------
+    // توابع خروجی و بازیابی
+    // --------------------------------------------------------------
+    function exportData() {
+        debts.forEach(debt => {
+            updateBalance(debt);
+            updateNextInstallment(debt);
+        });
+        
+        const dataStr = JSON.stringify(debts, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `debts_data_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('فایل JSON با موفقیت دانلود شد');
+    }
+
+    function restoreData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (!Array.isArray(data) || data.length === 0) {
+                    showToast('فایل معتبر نیست یا داده‌ای ندارد');
+                    return;
+                }
+                
+                if (confirm('آیا از بازگردانی داده‌ها اطمینان دارید؟ داده‌های فعلی جایگزین می‌شوند.')) {
+                    debts = data;
+                    const maxId = debts.reduce((max, d) => Math.max(max, d.id || 0), 0);
+                    nextId = maxId + 1;
+                    
+                    debts.forEach(debt => {
+                        if (!debt.installments || debt.installments.length === 0) {
+                            debt.installments = generateInstallments(debt);
+                        }
+                        debt.installments.forEach(inst => {
+                            if (inst.paid && !inst.paidDate) {
+                                inst.paidDate = inst.date;
+                            }
+                            if (!inst.paid && inst.paidDate) {
+                                inst.paidDate = null;
+                            }
+                        });
+                        updateBalance(debt);
+                        updateNextInstallment(debt);
+                    });
+                    
+                    saveToStorage(debts);
+                    filterTable();
+                    populateBankFilter();
+                    if (selectedDebtId !== null) {
+                        const stillExists = debts.some(d => d.id === selectedDebtId);
+                        if (!stillExists) {
+                            selectedDebtId = null;
+                            document.getElementById('installmentSection').classList.add('hidden');
+                        } else {
+                            renderInstallments(selectedDebtId);
+                        }
+                    }
+                    showToast('داده‌ها با موفقیت بازیابی شدند');
+                }
+            } catch (err) {
+                showToast('خطا در خواندن فایل: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #0f172a; color: white; padding: 12px 28px;
+            border-radius: 40px; font-size: 14px; z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.3s ease;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // --------------------------------------------------------------
+    // متغیرهای وضعیت
+    // --------------------------------------------------------------
+    let filteredData = [];
+    let selectedDebtId = null;
+    let editingDebtId = null;
+    let sortField = 'id';
+    let sortAsc = true;
+
+    let editingInstallmentDebtId = null;
+    let editingInstallmentIndex = null;
+    let paymentDebtId = null;
+    let paymentInstallmentIndex = null;
+
+    // --------------------------------------------------------------
+    // توابع مرتب‌سازی
+    // --------------------------------------------------------------
+    function sortTable(field) {
+        if (sortField === field) {
+            sortAsc = !sortAsc;
+        } else {
+            sortField = field;
+            sortAsc = true;
+        }
+        
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.classList.remove('active');
+            const icon = th.querySelector('.sort-icon');
+            if (icon) icon.textContent = '⇅';
+        });
+        const activeTh = document.querySelector(`th[data-sort="${field}"]`);
+        if (activeTh) {
+            activeTh.classList.add('active');
+            const icon = activeTh.querySelector('.sort-icon');
+            if (icon) icon.textContent = sortAsc ? '↑' : '↓';
+        }
+        
+        filterTable();
+    }
+
+    function getSortValue(item, field) {
+        switch(field) {
+            case 'id': return item.id;
+            case 'bank': return item.bank;
+            case 'dueDate': {
+                const parts = item.dueDate.split('/').map(Number);
+                return parts.length === 3 ? parts[0] * 10000 + parts[1] * 100 + parts[2] : 0;
+            }
+            case 'nextInstallment': {
+                if (item.nextInstallment === 'تمام شده') return 99999999;
+                if (item.nextInstallment === '—') return 0;
+                const parts = item.nextInstallment?.split('/').map(Number);
+                return parts && parts.length === 3 ? parts[0] * 10000 + parts[1] * 100 + parts[2] : 0;
+            }
+            case 'amount': return item.amount;
+            case 'balance': return item.balance || 0;
+            case 'status': {
+                const status = getStatus(item.nextInstallment, item);
+                if (status.text === 'سررسید گذشته') return 1;
+                if (status.text === 'نزدیک به سررسید') return 2;
+                if (status.text === 'فعال') return 3;
+                return 4;
+            }
+            default: return '';
+        }
+    }
+
+    // --------------------------------------------------------------
+    // توابع رندر
+    // --------------------------------------------------------------
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-inbox"></i><br>هیچ بدهی‌ای یافت نشد</td></tr>`;
+            document.getElementById('rowCount').innerText = '۰';
+            return;
+        }
+
+        const sorted = [...data].sort((a, b) => {
+            const valA = getSortValue(a, sortField);
+            const valB = getSortValue(b, sortField);
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
+            return sortAsc ? valA - valB : valB - valA;
+        });
+
+        let html = '';
+        sorted.forEach((item, index) => {
+            const status = getStatus(item.nextInstallment, item);
+            
+            const amountFormatted = item.amount.toLocaleString('fa-IR');
+            const balanceFormatted = (item.balance || 0).toLocaleString('fa-IR');
+            const isActive = (selectedDebtId === item.id);
+
+            html += `<tr class="clickable ${isActive ? 'active' : ''}" onclick="selectDebt(${item.id})">
+                <td>${index + 1}</td>
+                <td><span class="badge">${item.id}</span></td>
+                <td><strong>${item.bank}</strong></td>
+                <td>${item.dueDate}</td>
+                <td>${item.nextInstallment || '—'}</td>
+                <td>${amountFormatted}</td>
+                <td>${balanceFormatted}</td>
+                <td><span class="${status.class}">${status.text}</span></td>
+                <td class="no-print">
+                    <div class="action-buttons">
+                        <button class="btn-edit" onclick="event.stopPropagation(); openEditModal(${item.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn-delete-row" onclick="event.stopPropagation(); deleteDebtById(${item.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>`;
+        });
+
+        tbody.innerHTML = html;
+        document.getElementById('rowCount').innerText = data.length.toLocaleString('fa-IR');
+    }
+
+    function renderInstallments(debtId) {
+        const section = document.getElementById('installmentSection');
+        const debt = debts.find(d => d.id === debtId);
+        if (!debt) {
+            section.classList.add('hidden');
+            return;
+        }
+
+        section.classList.remove('hidden');
+        document.getElementById('selectedBankName').innerText = `(${debt.bank} - کد ${debt.id} - روز پرداخت: ${debt.installmentDay})`;
+
+        const installments = debt.installments || [];
+        const total = installments.length;
+        const paid = installments.filter(i => i.paid).length;
+        const unpaid = total - paid;
+        const totalAmount = installments.reduce((sum, i) => sum + i.amount, 0);
+        const totalPaid = installments.filter(i => i.paid).reduce((sum, i) => sum + i.amount, 0);
+        const remainingBalance = totalAmount - totalPaid;
+
+        document.getElementById('installmentTotalCount').innerText = total;
+        document.getElementById('installmentPaidCount').innerText = paid;
+        document.getElementById('installmentUnpaidCount').innerText = unpaid;
+        document.getElementById('installmentTotalAmount').innerText = totalAmount.toLocaleString('fa-IR');
+        document.getElementById('installmentTotalPaid').innerText = totalPaid.toLocaleString('fa-IR');
+        document.getElementById('installmentRemainingBalance').innerText = remainingBalance.toLocaleString('fa-IR');
+
+        const tbody = document.getElementById('installmentBody');
+        if (installments.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">هیچ قسطی ثبت نشده است</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        installments.forEach((inst, idx) => {
+            const statusText = inst.paid ? 'پرداخت شده' : 'پرداخت نشده';
+            const statusClass = inst.paid ? 'badge paid' : 'badge unpaid';
+            const btnText = inst.paid ? 'حذف پرداخت' : 'ثبت پرداخت';
+            const btnClass = inst.paid ? 'btn-pay paid' : 'btn-pay';
+
+            const paidDateHtml = inst.paid && inst.paidDate ? `<span class="paid-date">${inst.paidDate}</span>` : '—';
+
+            html += `<tr>
+                <td>${inst.row}</td>
+                <td>${inst.date}</td>
+                <td>${inst.amount.toLocaleString('fa-IR')}</td>
+                <td><span class="${statusClass}">${statusText}</span></td>
+                <td>${paidDateHtml}</td>
+                <td class="no-print">
+                    <div class="action-buttons">
+                        <button class="btn-edit-amount" onclick="openAmountModal(${debtId}, ${idx})">
+                            <i class="fas fa-pen"></i> ویرایش مبلغ
+                        </button>
+                        <button class="${btnClass}" onclick="${inst.paid ? `removePayment(${debtId}, ${idx})` : `openPaymentDateModal(${debtId}, ${idx})`}">
+                            <i class="fas ${inst.paid ? 'fa-undo' : 'fa-check'}"></i> ${btnText}
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+
+    // --------------------------------------------------------------
+    // توابع عملیاتی
+    // --------------------------------------------------------------
+    function selectDebt(debtId) {
+        if (selectedDebtId === debtId) {
+            selectedDebtId = null;
+            document.getElementById('installmentSection').classList.add('hidden');
+        } else {
+            selectedDebtId = debtId;
+            renderInstallments(debtId);
+        }
+        renderTable(filteredData);
+        updateStats(filteredData);
+    }
+
+    // ---- ثبت تاریخ پرداخت ----
+    function openPaymentDateModal(debtId, installmentIndex) {
+        const debt = debts.find(d => d.id === debtId);
+        if (!debt) return;
+        const inst = debt.installments[installmentIndex];
+        if (!inst) return;
+
+        paymentDebtId = debtId;
+        paymentInstallmentIndex = installmentIndex;
+
+        document.getElementById('paymentInstallmentDate').value = inst.date;
+        document.getElementById('paymentDateInput').value = '';
+        document.getElementById('paymentDateModal').classList.remove('hidden');
+    }
+
+    function closePaymentDateModal() {
+        document.getElementById('paymentDateModal').classList.add('hidden');
+        paymentDebtId = null;
+        paymentInstallmentIndex = null;
+    }
+
+    function savePaymentDate() {
+        if (paymentDebtId === null || paymentInstallmentIndex === null) return;
+
+        const paidDate = document.getElementById('paymentDateInput').value.trim();
+        if (!paidDate) {
+            alert('لطفاً تاریخ پرداخت را وارد کنید.');
+            return;
+        }
+
+        if (!isValidPersianDate(paidDate)) {
+            alert('فرمت تاریخ باید به صورت YYYY/MM/DD باشد. مثال: 1405/05/03');
+            return;
+        }
+
+        const debt = debts.find(d => d.id === paymentDebtId);
+        if (!debt) return;
+        const inst = debt.installments[paymentInstallmentIndex];
+        if (!inst) return;
+
+        inst.paid = true;
+        inst.paidDate = paidDate;
+        
+        updateBalance(debt);
+        updateNextInstallment(debt);
+
+        closePaymentDateModal();
+        saveToStorage(debts);
+        renderInstallments(paymentDebtId);
+        renderTable(filteredData);
+        updateStats(filteredData);
+        showToast('پرداخت ثبت شد');
+    }
+
+    // ---- حذف پرداخت ----
+    function removePayment(debtId, installmentIndex) {
+        if (!confirm('آیا از حذف این پرداخت اطمینان دارید؟')) return;
+
+        const debt = debts.find(d => d.id === debtId);
+        if (!debt) return;
+        const inst = debt.installments[installmentIndex];
+        if (!inst) return;
+
+        inst.paid = false;
+        inst.paidDate = null;
+        
+        updateBalance(debt);
+        updateNextInstallment(debt);
+
+        saveToStorage(debts);
+        renderInstallments(debtId);
+        renderTable(filteredData);
+        updateStats(filteredData);
+        showToast('پرداخت حذف شد');
+    }
+
+    // ---- ویرایش مبلغ قسط ----
+    function openAmountModal(debtId, installmentIndex) {
+        const debt = debts.find(d => d.id === debtId);
+        if (!debt) return;
+        const inst = debt.installments[installmentIndex];
+        if (!inst) return;
+
+        editingInstallmentDebtId = debtId;
+        editingInstallmentIndex = installmentIndex;
+
+        document.getElementById('editInstallmentDate').value = inst.date;
+        document.getElementById('editInstallmentAmount').value = inst.amount;
+        document.getElementById('amountModal').classList.remove('hidden');
+    }
+
+    function closeAmountModal() {
+        document.getElementById('amountModal').classList.add('hidden');
+        editingInstallmentDebtId = null;
+        editingInstallmentIndex = null;
+    }
+
+    function saveAmountEdit() {
+        if (editingInstallmentDebtId === null || editingInstallmentIndex === null) return;
+
+        const newAmount = parseInt(document.getElementById('editInstallmentAmount').value);
+        if (isNaN(newAmount) || newAmount <= 0) {
+            alert('لطفاً مبلغ معتبر وارد کنید.');
+            return;
+        }
+
+        const debt = debts.find(d => d.id === editingInstallmentDebtId);
+        if (!debt) return;
+        const inst = debt.installments[editingInstallmentIndex];
+        if (!inst) return;
+
+        inst.amount = newAmount;
+        
+        updateBalance(debt);
+        updateNextInstallment(debt);
+        
+        closeAmountModal();
+        saveToStorage(debts);
+        renderInstallments(editingInstallmentDebtId);
+        renderTable(filteredData);
+        updateStats(filteredData);
+        showToast('مبلغ قسط ویرایش شد');
+    }
+
+    // ---- مدیریت بدهی‌ها ----
+    function openAddModal() {
+        editingDebtId = null;
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> افزودن بدهی جدید';
+        document.getElementById('modalBank').value = '';
+        document.getElementById('modalDueDate').value = '';
+        document.getElementById('modalAmount').value = '';
+        document.getElementById('modalDay').value = '';
+        document.getElementById('modalDeleteBtn').style.display = 'none';
+        document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function openEditModal(id) {
+        const debt = debts.find(d => d.id === id);
+        if (!debt) return;
+        editingDebtId = id;
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> ویرایش بدهی';
+        document.getElementById('modalBank').value = debt.bank;
+        document.getElementById('modalDueDate').value = debt.dueDate;
+        document.getElementById('modalAmount').value = debt.amount;
+        document.getElementById('modalDay').value = debt.installmentDay;
+        document.getElementById('modalDeleteBtn').style.display = 'inline-block';
+        document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.add('hidden');
+        editingDebtId = null;
+    }
+
+    function saveDebt() {
+        const bank = document.getElementById('modalBank').value.trim();
+        const dueDate = document.getElementById('modalDueDate').value.trim();
+        const amount = parseInt(document.getElementById('modalAmount').value);
+        const day = parseInt(document.getElementById('modalDay').value);
+
+        if (!bank) {
+            alert('لطفاً نام بانک را وارد کنید.');
+            return;
+        }
+        if (!dueDate || !isValidPersianDate(dueDate)) {
+            alert('لطفاً تاریخ پایان را به فرمت YYYY/MM/DD وارد کنید.');
+            return;
+        }
+        
+        // بررسی اینکه تاریخ پایان از امروز بزرگتر باشد
+        const todayPersian = getCurrentPersianDate();
+        if (comparePersianDates(dueDate, todayPersian) < 0) {
+            alert('تاریخ پایان باید از تاریخ امروز بزرگتر باشد.');
+            return;
+        }
+        
+        if (isNaN(amount) || amount <= 0) {
+            alert('لطفاً مبلغ قسط را به درستی وارد کنید.');
+            return;
+        }
+        if (isNaN(day) || day < 1 || day > 31) {
+            alert('لطفاً روز پرداخت را بین 1 تا 31 وارد کنید.');
+            return;
+        }
+
+        if (editingDebtId !== null) {
+            const debt = debts.find(d => d.id === editingDebtId);
+            if (debt) {
+                const oldInstallments = debt.installments.map(inst => ({
+                    date: inst.date,
+                    paid: inst.paid,
+                    paidDate: inst.paidDate,
+                    amount: inst.amount
+                }));
+                
+                debt.bank = bank;
+                debt.dueDate = dueDate;
+                debt.amount = amount;
+                debt.installmentDay = day;
+                
+                const newInstallments = generateInstallments(debt);
+                
+                debt.installments = newInstallments.map(newInst => {
+                    const oldInst = oldInstallments.find(o => o.date === newInst.date);
+                    if (oldInst) {
+                        return {
+                            ...newInst,
+                            paid: oldInst.paid,
+                            paidDate: oldInst.paidDate,
+                            amount: oldInst.paid ? oldInst.amount : newInst.amount
+                        };
+                    }
+                    return newInst;
+                });
+                
+                updateBalance(debt);
+                updateNextInstallment(debt);
+            }
+        } else {
+            const newDebt = {
+                id: nextId++,
+                bank: bank,
+                dueDate: dueDate,
+                amount: amount,
+                installmentDay: day,
+                installments: []
+            };
+            newDebt.installments = generateInstallments(newDebt);
+            updateBalance(newDebt);
+            updateNextInstallment(newDebt);
+            debts.push(newDebt);
+        }
+
+        closeModal();
+        saveToStorage(debts);
+        filterTable();
+        populateBankFilter();
+        
+        if (selectedDebtId !== null) {
+            const stillExists = debts.some(d => d.id === selectedDebtId);
+            if (!stillExists) {
+                selectedDebtId = null;
+                document.getElementById('installmentSection').classList.add('hidden');
+            } else {
+                renderInstallments(selectedDebtId);
+            }
+        }
+        showToast('تغییرات اعمال شد');
+    }
+
+    function deleteDebt() {
+        if (editingDebtId === null) return;
+        if (confirm('آیا از حذف این بدهی اطمینان دارید؟')) {
+            deleteDebtById(editingDebtId);
+            closeModal();
+        }
+    }
+
+    function deleteDebtById(id) {
+        if (!confirm('آیا از حذف این بدهی اطمینان دارید؟')) return;
+        
+        if (selectedDebtId === id) {
+            selectedDebtId = null;
+            document.getElementById('installmentSection').classList.add('hidden');
+        }
+        
+        debts = debts.filter(d => d.id !== id);
+        saveToStorage(debts);
+        filterTable();
+        updateStats(filteredData);
+        populateBankFilter();
+        showToast('بدهی حذف شد');
+    }
+
+    // --------------------------------------------------------------
+    // آمار و فیلتر
+    // --------------------------------------------------------------
+    function updateStats(data) {
+        document.getElementById('totalCount').innerText = data.length;
+        const banks = new Set(data.map(d => d.bank));
+        document.getElementById('bankCount').innerText = banks.size;
+
+        const currentMonthTotal = calculateCurrentMonthInstallments(data);
+        document.getElementById('currentMonthInstallments').innerText = currentMonthTotal.toLocaleString('fa-IR');
+
+        const totalInstallmentsAmount = calculateTotalInstallmentsAmount(data);
+        document.getElementById('totalInstallmentsAmount').innerText = totalInstallmentsAmount.toLocaleString('fa-IR');
+
+        const nearest = calculateNearestDueDate(data);
+        document.getElementById('nearestDue').innerText = nearest;
+    }
+
+    function filterTable() {
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        const bankFilter = document.getElementById('bankFilter').value;
+
+        let filtered = debts.filter(item => {
+            const matchBank = bankFilter === 'همه' || item.bank === bankFilter;
+            
+            // جستجو در نام بانک، کد، تاریخ پایان، تاریخ قسط بعدی
+            const matchSearch = item.bank.includes(searchTerm) || 
+                                item.id.toString().includes(searchTerm) ||
+                                item.dueDate.includes(searchTerm) ||
+                                (item.nextInstallment && item.nextInstallment.includes(searchTerm));
+            return matchBank && matchSearch;
+        });
+
+        filteredData = filtered;
+        renderTable(filteredData);
+        updateStats(filteredData);
+
+        if (selectedDebtId !== null) {
+            const stillExists = filtered.some(d => d.id === selectedDebtId);
+            if (!stillExists) {
+                selectedDebtId = null;
+                document.getElementById('installmentSection').classList.add('hidden');
+            } else {
+                renderInstallments(selectedDebtId);
+            }
+        }
+    }
+
+    function populateBankFilter() {
+        const select = document.getElementById('bankFilter');
+        const banks = [...new Set(debts.map(d => d.bank))];
+        const currentValue = select.value;
+        select.innerHTML = '<option value="همه">همه بانک‌ها</option>';
+        banks.forEach(bank => {
+            const opt = document.createElement('option');
+            opt.value = bank;
+            opt.textContent = bank;
+            select.appendChild(opt);
+        });
+        if (currentValue && banks.includes(currentValue)) {
+            select.value = currentValue;
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('bankFilter').value = 'همه';
+        sortField = 'id';
+        sortAsc = true;
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.classList.remove('active');
+            const icon = th.querySelector('.sort-icon');
+            if (icon) icon.textContent = '⇅';
+        });
+        filterTable();
+        if (selectedDebtId !== null) {
+            renderInstallments(selectedDebtId);
+        }
+    }
+
+    // --------------------------------------------------------------
+    // مقداردهی اولیه
+    // --------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeData();
+        populateBankFilter();
+        document.querySelector('th[data-sort="id"]')?.classList.add('active');
+        filteredData = [...debts];
+        renderTable(filteredData);
+        updateStats(filteredData);
+        document.getElementById('installmentSection').classList.add('hidden');
+        document.getElementById('saveStatus').textContent = '✅ داده‌ها بارگذاری شد';
+        const enabledEl = document.getElementById('reminderEnabled');
+        if (enabledEl) enabledEl.checked = isReminderEnabled();
+        setTimeout(function() { syncAndroidReminders(false); }, 400);
+    });
+
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    document.getElementById('amountModal').addEventListener('click', function(e) {
+        if (e.target === this) closeAmountModal();
+    });
+    document.getElementById('paymentDateModal').addEventListener('click', function(e) {
+        if (e.target === this) closePaymentDateModal();
+    });
+
+    window.selectDebt = selectDebt;
+    window.filterTable = filterTable;
+    window.resetFilters = resetFilters;
+    window.openAddModal = openAddModal;
+    window.openEditModal = openEditModal;
+    window.closeModal = closeModal;
+    window.saveDebt = saveDebt;
+    window.deleteDebt = deleteDebt;
+    window.deleteDebtById = deleteDebtById;
+    window.sortTable = sortTable;
+    window.exportData = exportData;
+    window.restoreData = restoreData;
+    window.openAmountModal = openAmountModal;
+    window.closeAmountModal = closeAmountModal;
+    window.saveAmountEdit = saveAmountEdit;
+    window.openPaymentDateModal = openPaymentDateModal;
+    window.closePaymentDateModal = closePaymentDateModal;
+    window.savePaymentDate = savePaymentDate;
+    window.removePayment = removePayment;
+</script>
+</body>
+</html>

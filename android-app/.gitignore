@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+**/build/
+local.properties
+*.iml
+.idea/
+.cxx/
+captures/
+.externalNativeBuild/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node leftovers
+node_modules/
+package-lock.json
